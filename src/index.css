@@ -41,7 +41,7 @@ Variables
   --radius: 0.25rem;
   --light-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   --dark-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-  --max-width: 1170px;
+  --max-width: 600px;
   --fixed-width: 450px;
   --clr-orange-1: hsl(12, 83%, 98%);
   --clr-orange-2: hsl(14, 91%, 95%);
@@ -112,7 +112,7 @@ p {
   margin-bottom: 1.25rem;
   color: var(--clr-grey-5);
 }
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 600px) {
   h1 {
     font-size: 4rem;
   }
@@ -145,7 +145,7 @@ p {
   max-width: var(--max-width);
 }
 
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 600px) {
   .section {
     width: 95vw;
   }
@@ -221,8 +221,8 @@ p {
   background: var(--clr-white);
   max-width: var(--max-width);
   margin: 0 auto;
-  margin-bottom: 4rem;
-  padding: 1rem 2rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1rem;
   border-radius: var(--radius);
 }
 .form input {
@@ -231,7 +231,9 @@ p {
   border-radius: var(--radius);
   padding: 0.25rem 0.5rem;
   font-size: medium;
-  font-family: Consolas, Melno, monospace;
+  width: 180px;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
 }
 .form-control {
   margin: 0.5rem 0;
@@ -347,7 +349,15 @@ select {
   background:rgb(231, 231, 231);
   height:32px;
   border:1px solid #999;
-  width:200px;
+  width:180px;
   text-indent: 5px;
   -webkit-appearance: none;
+}
+.image {
+  width: 100%;
+}
+
+.fineprint {
+  font-size: 0.5rem;
+  color: maroon;
 }
