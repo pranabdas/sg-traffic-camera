@@ -1,5 +1,5 @@
 /*
-=============== 
+===============
 Variables
 ===============
 */
@@ -55,7 +55,7 @@ Variables
   --clr-orange-10: hsl(13, 73%, 16%);
 }
 /*
-=============== 
+===============
 Global Styles
 ===============
 */
@@ -358,6 +358,27 @@ select {
 }
 
 .fineprint {
-  font-size: 0.5rem;
+  font-size: 0.75rem;
   color: maroon;
+}
+
+.love {
+  color: red;
+}
+
+footer {
+  font-size: 0.9em;
+  color: #5bc0de;
+  padding: 10px;
+  text-align: center;
+}
+
+footer a {
+  color: #0275d8;
+}
+
+footer a:hover {
+color: red;
+text-decoration: none;
+font-style: normal;
 }

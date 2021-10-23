@@ -27,7 +27,7 @@ function App() {
     const imageURL = cameras[closestCameraIndex].image;
     setImageURL(imageURL);
     setTimestamp(
-      `Captured at ${new Date(cameras[closestCameraIndex].timestamp)}`
+      `Capture time: ${new Date(cameras[closestCameraIndex].timestamp)}`
     );
 
     const cameraID = cameras[closestCameraIndex].camera_id;
@@ -145,9 +145,8 @@ function App() {
       <br />
       <br />
       <footer>
-        © Copyright {new Date().getFullYear().toString()}{" "}
-        <a href="https://pranabdas.github.io/">Pranab Das</a>. All rights
-        reserved.
+      Made with <span className="love">♥</span> by{" "}
+      <a href="https://pranabdas.github.io/">Pranab</a>.
       </footer>
     </div>
   );
