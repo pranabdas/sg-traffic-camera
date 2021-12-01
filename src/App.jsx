@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { placeData } from "./Data";
 
 function App() {
-  const [latitude, setLatitude] = React.useState(1.3236);
-  const [longitude, setLongitude] = React.useState(103.8587);
-  const [status, setStatus] = React.useState("");
-  const [imageURL, setImageURL] = React.useState("");
-  const [timestamp, setTimestamp] = React.useState("");
-  const [cameraID, setCameraID] = React.useState("");
+  const [latitude, setLatitude] = useState(1.33);
+  const [longitude, setLongitude] = useState(103.85);
+  const [status, setStatus] = useState("");
+  const [imageURL, setImageURL] = useState("");
+  const [timestamp, setTimestamp] = useState("");
+  const [cameraID, setCameraID] = useState("");
 
   const url = "https://api.data.gov.sg/v1/transport/traffic-images";
 
@@ -27,7 +27,11 @@ function App() {
     const imageURL = cameras[closestCameraIndex].image;
     setImageURL(imageURL);
     setTimestamp(
-      `Capture time: ${new Date(cameras[closestCameraIndex].timestamp)}`
+      `Capture time: ${new Date(cameras[closestCameraIndex].timestamp)}
+
+Camera location: (${cameras[closestCameraIndex].location.latitude}, ${
+        cameras[closestCameraIndex].location.longitude
+      })`
     );
 
     const cameraID = cameras[closestCameraIndex].camera_id;
@@ -87,6 +91,14 @@ function App() {
     }
   };
 
+  // not working in safari
+  // const getLocation = () => {
+  //   navigator.geolocation.getCurrentPosition(function (location) {
+  //     setLatitude(location.coords.latitude);
+  //     setLongitude(location.coords.longitude);
+  //   });
+  // };
+
   return (
     <div className="container">
       <h3>Singapore traffic camera</h3>
@@ -134,6 +146,11 @@ function App() {
         <button className="btn" type="submit" onClick={handleSubmit}>
           Submit
         </button>
+        {/* <br />
+          Or request your device location{" "}
+          <button className="btn" type="submit" onClick={getLocation}>
+            Get location
+          </button> */}
       </form>
 
       <img className="image" src={imageURL} alt={cameraID} />
@@ -145,8 +162,8 @@ function App() {
       <br />
       <br />
       <footer>
-      Made with <span className="love">♥</span> by{" "}
-      <a href="https://pranabdas.github.io/">Pranab</a>.
+        Made with <span className="love">♥</span> by{" "}
+        <a href="https://pranabdas.github.io/">Pranab</a>.
       </footer>
     </div>
   );
