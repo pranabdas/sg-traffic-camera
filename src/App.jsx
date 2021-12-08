@@ -6,8 +6,13 @@ function App() {
   const [longitude, setLongitude] = useState(103.85);
   const [status, setStatus] = useState("");
   const [imageURL, setImageURL] = useState("");
-  const [timestamp, setTimestamp] = useState("");
-  const [cameraID, setCameraID] = useState("");
+  const [caption, setCaption] = useState("");
+
+  const [imageURL2, setImageURL2] = useState("");
+  const [caption2, setCaption2] = useState("");
+
+  const [imageURL3, setImageURL3] = useState("");
+  const [caption3, setCaption3] = useState("");
 
   const url = "https://api.data.gov.sg/v1/transport/traffic-images";
 
@@ -22,20 +27,45 @@ function App() {
       );
     }
 
-    let closestCameraIndex = dist.indexOf(Math.min.apply(Math, dist), 0);
+    let dist_sorted = [...dist];
+    dist_sorted.sort(function (a, b) {
+      return a - b;
+    });
+
+    // let closestCameraIndex = dist.indexOf(Math.min.apply(Math, dist), 0);
+    let closestCameraIndex = dist.indexOf(dist_sorted[0]);
 
     const imageURL = cameras[closestCameraIndex].image;
     setImageURL(imageURL);
-    setTimestamp(
-      `Capture time: ${new Date(cameras[closestCameraIndex].timestamp)}
-
-Camera location: (${cameras[closestCameraIndex].location.latitude}, ${
-        cameras[closestCameraIndex].location.longitude
-      })`
+    setCaption(
+      `Nearest camera location: (${
+        cameras[closestCameraIndex].location.latitude
+      }, ${cameras[closestCameraIndex].location.longitude})`
     );
 
-    const cameraID = cameras[closestCameraIndex].camera_id;
-    setCameraID(`Camera output of ${cameraID}`);
+    // second nearest camera
+    let closestCameraIndex2 = dist.indexOf(dist_sorted[1]);
+
+    const imageURL2 = cameras[closestCameraIndex2].image;
+    setImageURL2(imageURL2);
+    setCaption2(
+      `Second nearest camera location: (${
+        cameras[closestCameraIndex2].location.latitude
+      }, ${cameras[closestCameraIndex2].location.longitude})`
+    );
+
+    // third nearest camera
+    let closestCameraIndex3 = dist.indexOf(dist_sorted[2]);
+
+    const imageURL3 = cameras[closestCameraIndex3].image;
+    setImageURL3(imageURL3);
+    setCaption3(
+      `Third nearest camera location: (${
+        cameras[closestCameraIndex3].location.latitude
+      }, ${cameras[closestCameraIndex3].location.longitude})
+
+Latest camera snapshots at ${new Date(cameras[closestCameraIndex3].timestamp)}`
+    );
   };
 
   const handleChange = (e) => {
@@ -58,9 +88,8 @@ Camera location: (${cameras[closestCameraIndex].location.latitude}, ${
         .then((data) => {
           const lastUpdated = new Date(data.items[0].timestamp);
           setStatus(
-            `API status: ${data.api_info.status} | API last updated: ${lastUpdated}`
+            `API status: ${data.api_info.status} at ${lastUpdated}`
           );
-          console.log(status);
 
           const cameras = data.items[0].cameras;
           const lat = placeData[placeIndex].latitude;
@@ -79,9 +108,8 @@ Camera location: (${cameras[closestCameraIndex].location.latitude}, ${
         .then((data) => {
           const lastUpdated = new Date(data.items[0].timestamp);
           setStatus(
-            `API status: ${data.api_info.status} | API last updated: ${lastUpdated}`
+            `API status: ${data.api_info.status} at ${lastUpdated}`
           );
-          console.log(status);
 
           const cameras = data.items[0].cameras;
           ImageComponent(cameras, latitude, longitude);
@@ -102,7 +130,7 @@ Camera location: (${cameras[closestCameraIndex].location.latitude}, ${
   return (
     <div className="container">
       <h3>Singapore traffic camera</h3>
-      <p>Monitor traffic around you in Singapore.</p>
+      <p>Monitor realtime traffic around you in Singapore expressways.</p>
       <form className="form" onChange={handleChange}>
         <label htmlFor="place">Choose a location form here: &nbsp;</label>
         <select id="place" name="place">
@@ -152,12 +180,26 @@ Camera location: (${cameras[closestCameraIndex].location.latitude}, ${
             Get location
           </button> */}
       </form>
-
-      <img className="image" src={imageURL} alt={cameraID} />
-      <p></p>
+      <img className="image" src={imageURL} alt={imageURL} />
       <br />
       <pre className="fineprint">
-        <code>{timestamp}</code>
+        <code>{caption}</code>
+      </pre>
+      <br />
+      <br />
+      <img className="image" src={imageURL2} alt={imageURL2} />
+      <br />
+      <pre className="fineprint">
+        <code>{caption2}</code>
+      </pre>
+      <br />
+      <br />
+      <img className="image" src={imageURL3} alt={imageURL3} />
+      <br />
+      <pre className="fineprint">
+        <code>{caption3}</code>
+        <br />
+        <code>{status}</code>
       </pre>
       <br />
       <br />
