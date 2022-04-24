@@ -109,7 +109,7 @@ h4 {
   font-size: 0.875rem;
 }
 p {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
   color: var(--clr-grey-5);
 }
 @media screen and (min-width: 600px) {
@@ -153,11 +153,11 @@ p {
 
 .container {
   text-align: left;
-  margin-top: 2rem;
+  margin-top: 01rem;
 }
 .btn {
   display: inline-block;
-  background: var(--clr-primary-5);
+  background: rgba(0, 139, 139, 0.8);
   color: var(--clr-white);
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius);
@@ -169,11 +169,11 @@ p {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   cursor: pointer;
-  transition: var(--transition);
+  /* transition: var(--transition); */
 }
 .btn:hover {
-  background: var(--clr-primary-1);
-  color: var(--clr-primary-5);
+  background: rgb(0, 139, 139);
+  /* color: orange; */
 }
 .item {
   background: var(--clr-white);
@@ -371,6 +371,7 @@ footer {
   color: #5bc0de;
   padding: 10px;
   text-align: center;
+  padding-top: 2em;
 }
 
 footer a {
@@ -381,4 +382,9 @@ footer a:hover {
 color: red;
 text-decoration: none;
 font-style: normal;
+
+}
+
+.wrapper {
+  min-height: calc(100vh - 75px);
 }
