@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Select from "@mui/material/Select";
+import Alert from "@mui/material/Alert";
 
 import { placeData } from "./Data";
 
@@ -15,6 +16,7 @@ function App() {
     const [lastUpdated, setLastUpdated] = useState(null);
     const [sortedCameraData, setSortedCameraData] = useState([]);
     const [numberOfImages, setNumberOfImages] = useState(0);
+    const [errorMessage, setErrorMessage] = useState("");
     const api = "https://api.data.gov.sg/v1/transport/traffic-images";
 
     const HandleLocation = (e) => {
@@ -36,10 +38,18 @@ function App() {
         }
     }
 
-    const FetchImage = () => {
-        if (latitude && longitude) {
-            fetch(api)
+    async function FetchImage() {
+        setLatitude(parseFloat(latitude));
+        setLongitude(parseFloat(longitude));
+
+        if ((parseFloat(latitude) >= -90 || parseFloat(latitude) <= 90) && (parseFloat(longitude) >= 0 || parseFloat(longitude) <= 360)) {
+            await fetch(api)
                 .then((r) => r.json())
+                // .then((response) => {
+                //     if (!response.ok) {
+                //         setErrorMessage("Something went wrong.")
+                //     } else {
+                //     return response.json()}})
                 .then((data) => {
                     const lastUpdated = new Date(data.items[0].timestamp);
                     setLastUpdated(`${lastUpdated}`);
@@ -66,12 +76,17 @@ function App() {
 
                     if (sortedCameraData.length > 0) {
                         setNumberOfImages(1);
+                        setSortedCameraData(sortedCameraData);
+                        setErrorMessage("");
+                    } else {
+                        setSortedCameraData([]);
+                        setErrorMessage("No camera image to show.");
                     }
-
-                    setSortedCameraData(sortedCameraData);
-                });
+                })
+                .catch((error) => (setErrorMessage(error)));
         } else {
-            console.log("Please enter valid latitude and longitude.");
+            setErrorMessage("Please select a location or enter valid GPS coordinates.");
+            setSortedCameraData([]);
         }
     };
 
@@ -84,7 +99,7 @@ function App() {
 
         return (
             images.map((item, key) => (
-                <div key={key}>
+                <div key={key} style={{paddingTop: "1em"}}>
                     <img className="image" src={item.image} alt={item.image} />
                     <p>Nearest camera {key + 1} ({item.location.latitude}, {item.location.longitude})</p>
                 </div>
@@ -144,7 +159,7 @@ function App() {
                             label="longitude"
                             value={longitude}
                             onChange={(e) => {
-                                setLatitude(e.target.value);
+                                setLongitude(e.target.value);
                             }}
                         />
                     </div>
@@ -157,16 +172,29 @@ function App() {
                 <br />
                 <br />
 
-                {sortedCameraData.length && numberOfImages ? (<>
+                {sortedCameraData.length ? (<>
                     <ImageComponent data={sortedCameraData} numberOfImages={numberOfImages} />
 
                     {lastUpdated ? <p>Camera snapshots last updated at {lastUpdated}</p> : null}
 
-                    <button className="btn" onClick={() => setNumberOfImages(numberOfImages + 1)}>
-                        Show next nearest camera
-                    </button>
+                    {numberOfImages < sortedCameraData.length ? (
+                        <button className="btn" onClick={() => setNumberOfImages(numberOfImages + 1)}>
+                            Show next nearest camera
+                        </button>
+                    ) : null}
+
                 </>
                 ) : null}
+
+                <br />
+                <br />
+
+                {errorMessage ? (
+                    <Alert severity="error">
+                        {errorMessage}
+                    </Alert>
+                ) : null}
+
             </div>
             <footer>
                 Made with <span className="love">♥</span> by{" "}

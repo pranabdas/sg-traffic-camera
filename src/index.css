@@ -157,9 +157,9 @@ p {
 }
 .btn {
   display: inline-block;
-  background: rgba(0, 139, 139, 0.8);
+  background: rgb(0, 139, 139);
   color: var(--clr-white);
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem;
   border-radius: var(--radius);
   border-color: transparent;
   text-transform: capitalize;
@@ -172,7 +172,7 @@ p {
   /* transition: var(--transition); */
 }
 .btn:hover {
-  background: rgb(0, 139, 139);
+  background: rgba(0, 139, 139, 0.9);
   /* color: orange; */
 }
 .item {
