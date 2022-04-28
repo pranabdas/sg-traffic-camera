@@ -56,11 +56,23 @@ function App() {
                     let cameraData = data.items[0].cameras;
 
                     let dist = [];
+                    let lat = (parseFloat(latitude) * Math.PI) / 180,
+                        lon = (parseFloat(longitude) * Math.PI) / 180;
                     for (let i = 0; i < cameraData.length; i++) {
-                        dist.push(
-                            (parseFloat(latitude) - parseFloat(cameraData[i].location.latitude)) ** 2 +
-                            (parseFloat(longitude) - parseFloat(cameraData[i].location.longitude)) ** 2
-                        );
+                        let lat_cam =
+                            (parseFloat(cameraData[i].location.latitude) * Math.PI) / 180,
+                            lon_cam =
+                                (parseFloat(cameraData[i].location.longitude) * Math.PI) / 180;
+
+                        // Haversine formula
+                        let a =
+                            Math.sin((lat - lat_cam) / 2) ** 2 +
+                            Math.cos(lat) *
+                            Math.cos(lat_cam) *
+                            Math.sin((lon - lon_cam) / 2) ** 2;
+                        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        let d = 6371e+3 * c;
+                        dist.push(d);
                     }
 
                     let distSorted = [...dist];
@@ -99,7 +111,7 @@ function App() {
 
         return (
             images.map((item, key) => (
-                <div key={key} style={{paddingTop: "1em"}}>
+                <div key={key} style={{ paddingTop: "1em" }}>
                     <img className="image" src={item.image} alt={item.image} />
                     <p>Nearest camera {key + 1} ({item.location.latitude}, {item.location.longitude})</p>
                 </div>
