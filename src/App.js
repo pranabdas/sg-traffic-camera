@@ -1,13 +1,37 @@
-import { useState } from "react";
-import InputLabel from '@mui/material/InputLabel';
+import { useState, useRef } from "react";
+import InputLabel from "@mui/material/InputLabel";
 import Box from "@mui/material/Box";
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import Alert from "@mui/material/Alert";
-
 import { placeData } from "./Data";
+
+const ImageComponent = ({ data, numberOfImages, imageLoaded }) => {
+  let images = [];
+
+  for (let ii = 0; ii < numberOfImages; ii++) {
+    images.push(data[ii]);
+  }
+
+  return images.map((item, key) => (
+    <div key={key} style={{ paddingTop: "1em" }}>
+      <img
+        className="image"
+        src={item.image}
+        alt={item.image}
+        onLoad={() => imageLoaded(key)}
+      />
+      <p>
+        Nearest camera{" "}
+        <code>
+          {key + 1} ({item.location.latitude}, {item.location.longitude})
+        </code>
+      </p>
+    </div>
+  ));
+};
 
 function App() {
   const [location, setLocation] = useState(null);
@@ -18,9 +42,10 @@ function App() {
   const [numberOfImages, setNumberOfImages] = useState(0);
   const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const scrollRef = useRef();
   const api = "https://api.data.gov.sg/v1/transport/traffic-images";
 
-  const HandleLocation = (e) => {
+  const handleLocation = (e) => {
     const location = e.target.value;
     setLocation(location);
     setSortedCameraData([]);
@@ -37,13 +62,16 @@ function App() {
       setLatitude(placeData[placeIndex].latitude);
       setLongitude(placeData[placeIndex].longitude);
     }
-  }
+  };
 
-  const FetchImage = () => {
+  const fetchImage = () => {
     setLatitude(parseFloat(latitude));
     setLongitude(parseFloat(longitude));
 
-    if ((parseFloat(latitude) >= -90 || parseFloat(latitude) <= 90) && (parseFloat(longitude) >= 0 || parseFloat(longitude) <= 360)) {
+    if (
+      (parseFloat(latitude) >= -90 || parseFloat(latitude) <= 90) &&
+      (parseFloat(longitude) >= 0 || parseFloat(longitude) <= 360)
+    ) {
       setLoading(true);
       fetch(api)
         .then((r) => r.json())
@@ -62,7 +90,7 @@ function App() {
             lon = (parseFloat(longitude) * Math.PI) / 180;
           for (let i = 0; i < cameraData.length; i++) {
             let lat_cam =
-              (parseFloat(cameraData[i].location.latitude) * Math.PI) / 180,
+                (parseFloat(cameraData[i].location.latitude) * Math.PI) / 180,
               lon_cam =
                 (parseFloat(cameraData[i].location.longitude) * Math.PI) / 180;
 
@@ -70,10 +98,10 @@ function App() {
             let a =
               Math.sin((lat - lat_cam) / 2) ** 2 +
               Math.cos(lat) *
-              Math.cos(lat_cam) *
-              Math.sin((lon - lon_cam) / 2) ** 2;
+                Math.cos(lat_cam) *
+                Math.sin((lon - lon_cam) / 2) ** 2;
             let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            let d = 6371e+3 * c;
+            let d = 6371e3 * c;
             dist.push(d);
           }
 
@@ -98,35 +126,28 @@ function App() {
           }
         })
         .then(() => setLoading(false))
-        .catch((error) => (setErrorMessage(error)));
+        .catch((error) => setErrorMessage(error));
     } else {
-      setErrorMessage("Please select a location or enter valid GPS coordinates.");
+      setErrorMessage(
+        "Please select a location or enter valid GPS coordinates."
+      );
       setSortedCameraData([]);
     }
   };
 
-  const ImageComponent = ({ data, numberOfImages }) => {
-    let images = [];
-
-    for (let ii = 0; ii < numberOfImages; ii++) {
-      images.push(data[ii])
+  const imageLoaded = (index) => {
+    if (index === numberOfImages - 1) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-
-    return (
-      images.map((item, key) => (
-        <div key={key} style={{ paddingTop: "1em" }}>
-          <img className="image" src={item.image} alt={item.image} />
-          <p>Nearest camera <code>{key + 1} ({item.location.latitude}, {item.location.longitude})</code></p>
-        </div>
-      ))
-    )
-  }
+  };
 
   return (
     <div className="container">
       <div className="wrapper">
         <h3>Singapore traffic camera</h3>
-        <p><i>Monitor realtime traffic around you in Singapore expressways</i></p>
+        <p>
+          <i>Monitor realtime traffic around you in Singapore expressways</i>
+        </p>
         <br />
 
         <p>Select location:</p>
@@ -138,7 +159,7 @@ function App() {
               id="location"
               value={location || ""}
               label="location"
-              onChange={HandleLocation}
+              onChange={handleLocation}
             >
               {placeData.map((item, key) => (
                 <MenuItem value={item.place} key={key}>
@@ -155,7 +176,7 @@ function App() {
         <Box
           component="form"
           sx={{
-            '& .MuiTextField-root': { m: 1, width: '25ch' },
+            "& .MuiTextField-root": { m: 1, width: "25ch" },
           }}
           noValidate
           autoComplete="off"
@@ -180,45 +201,57 @@ function App() {
           </div>
         </Box>
 
-        <button className="btn" onClick={FetchImage}>
+        <button className="btn" onClick={fetchImage}>
           Fetch latest images
         </button>
 
         <br />
         <br />
 
-        {isLoading && <p><code>Loading...</code></p>}
+        {isLoading && (
+          <p>
+            <code>Loading...</code>
+          </p>
+        )}
 
-        {sortedCameraData.length ? (<>
-          <ImageComponent data={sortedCameraData} numberOfImages={numberOfImages} />
+        {sortedCameraData.length ? (
+          <>
+            <ImageComponent
+              data={sortedCameraData}
+              numberOfImages={numberOfImages}
+              imageLoaded={imageLoaded}
+            />
 
-          {lastUpdated ? <p>Camera snapshots taken at <code>{lastUpdated}</code></p> : null}
+            {lastUpdated ? (
+              <p>
+                Camera snapshots taken at <code>{lastUpdated}</code>
+              </p>
+            ) : null}
 
-          {numberOfImages < sortedCameraData.length ? (
-            <button className="btn" onClick={() => setNumberOfImages(numberOfImages + 1)}>
-              Show next nearest camera
-            </button>
-          ) : null}
-
-        </>
+            <div ref={scrollRef}>
+              {numberOfImages < sortedCameraData.length ? (
+                <button
+                  className="btn"
+                  onClick={() => setNumberOfImages(numberOfImages + 1)}
+                >
+                  Show next nearest camera
+                </button>
+              ) : null}
+            </div>
+          </>
         ) : null}
 
         <br />
         <br />
 
-        {errorMessage ? (
-          <Alert severity="error">
-            {errorMessage}
-          </Alert>
-        ) : null}
-
+        {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
       </div>
       <footer>
         Made with <span className="love">♥</span> by{" "}
         <a href="https://pranabdas.github.io/">Pranab</a>.
       </footer>
     </div>
-  )
+  );
 }
 
 export default App;
