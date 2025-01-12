@@ -248,7 +248,7 @@ function App() {
       </div>
       <footer>
         Made with <span className="love">♥</span> by{" "}
-        <a href="https://pranabdas.github.io/">Pranab</a>.
+        <a href="https://github.com/pranabdas/sg-traffic-camera">Pranab</a>.
       </footer>
     </div>
   );
