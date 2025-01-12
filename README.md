@@ -10,4 +10,3 @@ Access the app at <https://sg-traffic.netlify.app/>
 npx npm-check-updates --target minor
 npx npm-check-updates --upgrade --target minor
 ```
-
